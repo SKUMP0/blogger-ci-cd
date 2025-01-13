@@ -60,19 +60,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Fix permissions for Cypress
-        run: chmod +x ./node_modules/.bin/cypress
-
       - name: Install Cypress Binary
         run: npx cypress install
 
-      - name: Cache Cypress Binary
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/Cypress
-          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-cypress-
+      - name: Fix permissions for Cypress
+        run: chmod +x ./node_modules/.bin/cypress
 
-      - name: Run Cypress Frontend Tests
-        run: npx cypress run --browser chrome
+      - name: Start the Server
+        run: |
+          npm start &
+          sleep 20  # Wait for the server to fully start
+
+      - name: Run Cypress Frontend Tests (Headless)
+        run: npx cypress run --browser chrome --headless --no-sandbox --disable-gpu
