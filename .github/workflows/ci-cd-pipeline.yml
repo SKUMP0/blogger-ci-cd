@@ -1,6 +1,5 @@
 name: Node.js CI/CD Pipeline
 
-# Trigger pipeline when code is pushed to main branch
 on:
   push:
     branches:
@@ -25,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Fix permissions for node_modules
+        run: chmod -R 755 node_modules
+
   backend-tests:
     runs-on: ubuntu-latest
     needs: build
@@ -35,6 +37,9 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Fix permissions for backend testing
+        run: chmod +x ./node_modules/.bin/nyc
 
       - name: Run Backend Tests
         run: npm run backend-test
@@ -50,20 +55,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Frontend Tests
+      - name: Fix permissions for Cypress
+        run: chmod +x ./node_modules/.bin/cypress
+
+      - name: Run Cypress Frontend Tests
         run: npx cypress run --browser chrome
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [backend-tests, frontend-tests]
-    if: success()
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
