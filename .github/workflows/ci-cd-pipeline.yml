@@ -21,11 +21,14 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Clean npm cache
+        run: npm cache clean --force
 
-      - name: Fix permissions for node modules
-        run: chmod -R 755 node_modules
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fix permissions for node_modules
+        run: chmod -R 777 node_modules
 
   backend-tests:
     runs-on: ubuntu-latest
@@ -36,10 +39,12 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Fix permissions for Mocha
-        run: chmod +x ./node_modules/.bin/mocha
+      - name: Fix permissions for Mocha and NYC
+        run: |
+          chmod +x ./node_modules/.bin/mocha
+          chmod +x ./node_modules/.bin/nyc
 
       - name: Run Backend Tests
         run: npx nyc mocha
@@ -53,7 +58,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Fix permissions for Cypress
+        run: chmod +x ./node_modules/.bin/cypress
 
       - name: Install Cypress Binary
         run: npx cypress install
