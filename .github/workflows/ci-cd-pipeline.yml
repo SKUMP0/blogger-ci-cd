@@ -69,7 +69,7 @@ jobs:
       - name: Start the Server
         run: |
           npm start &
-          sleep 20  # Wait for the server to fully start
+          npx wait-on http://localhost:6060
 
       - name: Run Cypress Frontend Tests (Fixed)
-        run: npx cypress run --browser chrome --headless
+        run: npx cypress run --browser chrome --headless --disable-gpu
