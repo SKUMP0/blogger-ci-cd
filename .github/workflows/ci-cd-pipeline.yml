@@ -72,4 +72,4 @@ jobs:
           npx wait-on http://localhost:6060
 
       - name: Run Cypress Frontend Tests (Fixed)
-        run: npx cypress run --browser chrome --headless --disable-gpu
+        run: npx cypress run --browser chrome --headless
