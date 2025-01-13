@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Fix permissions for node_modules
+      - name: Fix permissions for node modules
         run: chmod -R 755 node_modules
 
   backend-tests:
@@ -38,11 +38,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Fix permissions for backend testing
-        run: chmod +x ./node_modules/.bin/nyc
+      - name: Fix permissions for Mocha
+        run: chmod +x ./node_modules/.bin/mocha
 
       - name: Run Backend Tests
-        run: npm run backend-test
+        run: npx nyc mocha
 
   frontend-tests:
     runs-on: ubuntu-latest
@@ -55,8 +55,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Fix permissions for Cypress
-        run: chmod +x ./node_modules/.bin/cypress
+      - name: Install Cypress Binary
+        run: npx cypress install
+
+      - name: Cache Cypress Binary
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
 
       - name: Run Cypress Frontend Tests
         run: npx cypress run --browser chrome
